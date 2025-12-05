@@ -6,8 +6,9 @@ export function getStudents() {
   return axios.get(`${API_BASE}/students`).then(res => res.data);
 }
 
-export function addStudent(name) {
-  return axios.post(`${API_BASE}/students`, { name }).then(res => res.data);
+export function addStudent(roll, name) {
+  return axios.post(`${API_BASE}/students`, { roll, name })
+    .then(res => res.data);
 }
 
 export function getAttendance(date) {
