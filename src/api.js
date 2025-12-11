@@ -21,3 +21,9 @@ export function saveAttendance(date, records) {
   return axios.post(`${API_BASE}/attendance`, { date, records })
     .then(res => res.data);
 }
+
+export function downloadCsv() {
+  return axios.get("http://localhost:4000/download-csv", {
+    responseType: "blob", // VERY IMPORTANT
+  });
+}

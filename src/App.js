@@ -5,6 +5,7 @@ import {
   addStudent,
   getAttendance,
   saveAttendance,
+  downloadCsv,
 } from "./api";
 
 function formatDate(date) {
@@ -139,6 +140,25 @@ function App() {
     }
   };
 
+  const handleDownloadCsv = async () => {
+  try {
+    const response = await downloadCsv();
+
+    // Create file download link
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "attendance.csv";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  } catch (e) {
+    console.error("Download failed", e);
+    setError("Failed to download CSV");
+  }
+};
+
+
   return (
     <div style={{ padding: 20, fontFamily: "sans-serif" }}>
       <h1>Local Attendance System</h1>
@@ -233,6 +253,12 @@ function App() {
             style={{ marginTop: 20 }}
           >
             {saving ? "Saving..." : "Save Attendance"}
+          </button>
+          <button
+            style={{ marginLeft: 20 }}
+            onClick={handleDownloadCsv}
+          >
+            Download CSV
           </button>
         </div>
       </div>
