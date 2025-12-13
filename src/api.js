@@ -26,3 +26,10 @@ export function saveAttendanceForClass(className, date, records) {
 export function downloadCsvForClass(className) {
   return axios.get(`${API_BASE}/classes/${encodeURIComponent(className)}/download-csv`, { responseType: "blob" });
 }
+
+export function deleteClassApi(className) {
+  return fetch(
+    `http://localhost:4000/classes/${encodeURIComponent(className)}`,
+    { method: "DELETE" }
+  ).then(res => res.json());
+}

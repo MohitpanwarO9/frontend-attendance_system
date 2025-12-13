@@ -172,3 +172,32 @@ th {
     border-bottom: 1px solid #e5e7eb;
   }
 }
+
+/* ===== Delete Class Button (Larger) ===== */
+.delete-btn {
+  background: transparent;
+  border: 1px solid #fecaca;      /* soft red border */
+  color: #dc2626;                 /* red-600 */
+  border-radius: 8px;
+  padding: 6px 12px;              /* ⬅ larger */
+  cursor: pointer;
+  font-size: 16px;                /* ⬅ bigger icon */
+  line-height: 1;
+  transition: all 0.2s ease;
+}
+
+.delete-btn:hover {
+  background: #fee2e2;
+  border-color: #fca5a5;
+}
+
+.delete-btn:active {
+  transform: scale(0.96);
+}
+
+.delete-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.25);
+}
+
+

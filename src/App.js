@@ -8,6 +8,7 @@ import {
   getAttendanceForClass,
   saveAttendanceForClass,
   downloadCsvForClass,
+  deleteClassApi,
 } from "./api";
 
 const today = new Date().toISOString().slice(0, 10);
@@ -33,9 +34,7 @@ function App() {
       getAttendanceForClass(activeClass, today),
     ]).then(([stu, att]) => {
       setStudents(stu);
-      setAttendance(
-        att.length ? att : stu.map(s => ({ ...s, status: "" }))
-      );
+      setAttendance(att.length ? att : stu.map((s) => ({ ...s, status: "" })));
     });
   }, [activeClass]);
 
@@ -49,25 +48,55 @@ function App() {
 
       {/* Layout */}
       <div className="container">
-
         {/* Sidebar */}
         <aside className="sidebar">
           <h2>Classes</h2>
-          {classes.map(c => (
-            <button
+          {classes.map((c) => (
+            <div
               key={c}
-              className={`class-btn ${activeClass === c ? "active" : ""}`}
-              onClick={() => setActiveClass(c)}
+              style={{ display: "flex", alignItems: "center", gap: "6px" }}
             >
-              {c}
-            </button>
+              <button
+                className={`class-btn ${activeClass === c ? "active" : ""}`}
+                onClick={() => setActiveClass(c)}
+                style={{ flex: 1 }}
+              >
+                {c}
+              </button>
+
+              <button
+                className="delete-btn"
+                title="Delete class"
+                onClick={async () => {
+                  const confirmDelete = window.confirm(
+                    `Are you sure you want to delete the class "${c}"?\n\nThis will permanently delete all attendance data.`
+                  );
+
+                  if (!confirmDelete) return;
+
+                  await deleteClassApi(c);
+
+                  const updatedClasses = await getClasses();
+                  setClasses(updatedClasses);
+
+                  // Reset selection if deleted class was active
+                  if (activeClass === c) {
+                    setActiveClass("");
+                    setStudents([]);
+                    setAttendance([]);
+                  }
+                }}
+              >
+                🗑
+              </button>
+            </div>
           ))}
 
           <div className="new-class">
             <input
               placeholder="New class"
               value={newClass}
-              onChange={e => setNewClass(e.target.value)}
+              onChange={(e) => setNewClass(e.target.value)}
             />
             <button
               onClick={async () => {
@@ -94,19 +123,20 @@ function App() {
                 <input
                   placeholder="Roll"
                   value={roll}
-                  onChange={e => setRoll(e.target.value)}
+                  onChange={(e) => setRoll(e.target.value)}
                 />
                 <input
                   placeholder="Name"
                   value={name}
-                  onChange={e => setName(e.target.value)}
+                  onChange={(e) => setName(e.target.value)}
                   style={{ marginLeft: 6 }}
                 />
                 <button
                   onClick={async () => {
                     await addStudentToClass(activeClass, roll, name);
                     setStudents(await getStudentsForClass(activeClass));
-                    setRoll(""); setName("");
+                    setRoll("");
+                    setName("");
                   }}
                   style={{ marginLeft: 6 }}
                 >
@@ -127,7 +157,7 @@ function App() {
                     </tr>
                   </thead>
                   <tbody>
-                    {attendance.map(s => (
+                    {attendance.map((s) => (
                       <tr key={s.roll}>
                         <td>{s.roll}</td>
                         <td>{s.name}</td>
@@ -136,11 +166,9 @@ function App() {
                             type="radio"
                             checked={s.status === "P"}
                             onChange={() =>
-                              setAttendance(prev =>
-                                prev.map(x =>
-                                  x.roll === s.roll
-                                    ? { ...x, status: "P" }
-                                    : x
+                              setAttendance((prev) =>
+                                prev.map((x) =>
+                                  x.roll === s.roll ? { ...x, status: "P" } : x
                                 )
                               )
                             }
@@ -151,11 +179,9 @@ function App() {
                             type="radio"
                             checked={s.status === "A"}
                             onChange={() =>
-                              setAttendance(prev =>
-                                prev.map(x =>
-                                  x.roll === s.roll
-                                    ? { ...x, status: "A" }
-                                    : x
+                              setAttendance((prev) =>
+                                prev.map((x) =>
+                                  x.roll === s.roll ? { ...x, status: "A" } : x
                                 )
                               )
                             }
@@ -172,7 +198,7 @@ function App() {
                       saveAttendanceForClass(
                         activeClass,
                         today,
-                        attendance.map(x => ({
+                        attendance.map((x) => ({
                           roll: x.roll,
                           status: x.status,
                         }))
@@ -182,9 +208,7 @@ function App() {
                     Save Attendance
                   </button>
 
-                  <button
-                    onClick={() => downloadCsvForClass(activeClass)}
-                  >
+                  <button onClick={() => downloadCsvForClass(activeClass)}>
                     Download CSV
                   </button>
                 </div>
