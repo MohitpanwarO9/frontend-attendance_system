@@ -24,7 +24,10 @@ export function saveAttendanceForClass(className, date, records) {
 }
 
 export function downloadCsvForClass(className) {
-  return axios.get(`${API_BASE}/classes/${encodeURIComponent(className)}/download-csv`, { responseType: "blob" });
+  console.log(className)
+  const result =  axios.get(`${API_BASE}/classes/${encodeURIComponent(className)}/download-csv`, { responseType: "blob" });
+  console.log(result);
+  return result;
 }
 
 export function deleteClassApi(className) {

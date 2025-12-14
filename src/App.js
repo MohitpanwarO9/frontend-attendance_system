@@ -38,6 +38,28 @@ function App() {
     });
   }, [activeClass]);
 
+  const handleDownloadCsv = async () => {
+  try {
+    const response = await downloadCsvForClass(activeClass);
+
+    // axios vs fetch compatibility
+    const blob = response.data ? response.data : response;
+
+    const url = window.URL.createObjectURL(new Blob([blob]));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${activeClass}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+  } catch (err) {
+    console.error("CSV download failed", err);
+    alert("Failed to download CSV");
+  }
+};
+
+
   return (
     <>
       {/* Header */}
@@ -134,7 +156,24 @@ function App() {
                 <button
                   onClick={async () => {
                     await addStudentToClass(activeClass, roll, name);
-                    setStudents(await getStudentsForClass(activeClass));
+
+                    // Get updated students
+                    const updatedStudents = await getStudentsForClass(
+                      activeClass
+                    );
+                    setStudents(updatedStudents);
+
+                    // 🔑 IMPORTANT: sync attendance state also
+                    setAttendance((prev) => {
+                      const exists = prev.find((s) => s.roll === roll);
+                      if (exists) return prev;
+
+                      return [
+                        ...prev,
+                        { roll, name, status: "" }, // new student added instantly
+                      ];
+                    });
+
                     setRoll("");
                     setName("");
                   }}
@@ -208,7 +247,7 @@ function App() {
                     Save Attendance
                   </button>
 
-                  <button onClick={() => downloadCsvForClass(activeClass)}>
+                  <button onClick={handleDownloadCsv}>
                     Download CSV
                   </button>
                 </div>
