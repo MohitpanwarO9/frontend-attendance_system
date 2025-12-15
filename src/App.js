@@ -233,16 +233,17 @@ function App() {
 
                 <div className="actions">
                   <button
-                    onClick={() =>
-                      saveAttendanceForClass(
+                    onClick={async() =>{
+                      await saveAttendanceForClass(
                         activeClass,
                         today,
                         attendance.map((x) => ({
                           roll: x.roll,
                           status: x.status,
                         }))
-                      )
-                    }
+                      );
+                      alert("Attendance save successFully");
+                    }}
                   >
                     Save Attendance
                   </button>
