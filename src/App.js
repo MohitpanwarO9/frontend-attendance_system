@@ -122,6 +122,11 @@ function App() {
             />
             <button
               onClick={async () => {
+                if(newClass.length == 0){
+                  alert("Please enter a valid class Name");
+                  return;
+                }
+
                 await createClass(newClass);
                 setClasses(await getClasses());
                 setActiveClass(newClass);
@@ -234,6 +239,16 @@ function App() {
                 <div className="actions">
                   <button
                     onClick={async() =>{
+                      
+                      const check = attendance.every((x)=>{
+                        return x.status.length === 0 ? false : true;
+                      })
+
+                      if(!check){
+                        alert("Please mark the attendance for all student");
+                        return;
+                      }
+
                       await saveAttendanceForClass(
                         activeClass,
                         today,
