@@ -151,15 +151,22 @@ function App() {
                   placeholder="Roll"
                   value={roll}
                   onChange={(e) => setRoll(e.target.value)}
+                  required
                 />
                 <input
                   placeholder="Name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   style={{ marginLeft: 6 }}
+                  required
                 />
                 <button
                   onClick={async () => {
+
+                    if(!roll || !name){
+                      alert("Please write vaild Roll No and Name");
+                      return;
+                    }
                     await addStudentToClass(activeClass, roll, name);
 
                     // Get updated students
